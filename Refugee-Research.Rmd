@@ -1,0 +1,41 @@
+---
+title: "Refugee.Rmd"
+output: html_document
+date: "2023-08-07"
+---
+
+```{r}
+
+# To use ggplot2, we have to install tidyverse
+# ggplot2: package for creating data visualizations
+install.packages("tidyverse")
+library(tidyverse)
+
+# read csv files, load it into a variable
+data <- read_csv("/Users/dimitri/Desktop/scripts_data/section2/resettlement.csv")
+
+str(data) # left side
+head(data) # head top
+
+# convert to numeric
+data$Year <- as.numeric(data$Year)
+data$Number <- as.numeric(data$Number)
+
+# Group by Country and Origin
+# Get the total num of refugees for each group
+data_wrangled <- data %>%
+  group_by(Country, Origin) %>%
+  summarise(Total_Refugees = sum(Number, na.rm = TRUE))
+
+# make a bar plot
+bar_plot <- ggplot(data_wrangled, aes(x = Country, y = Total_Refugees)) +
+  geom_bar(stat = "identity", fill = "pink") +
+  labs(title = "Total Number of Refugees by Country",
+       x = "Country",
+       y = "Total Refugees") +
+  theme(axis.text.x = element_text(angle = 80, hjust = 1))
+
+#save file
+ggsave("bar_chart.pdf", plot = bar_plot, device = "pdf")
+
+```
